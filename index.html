@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Достижения и игры</title>
+    <style>
+        :root {
+            --primary-color: #4a6fa5;
+            --secondary-color: #166088;
+            --accent-color: #4fc3f7;
+            --background-color: #f5f5f5;
+            --card-color: #ffffff;
+            --text-color: #333333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            background-color: var(--card-color);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            margin-right: 20px;
+        }
+
+        .profile-info h2 {
+            margin-bottom: 5px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: var(--accent-color);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .stats {
+            display: flex;
+            margin-top: 10px;
+        }
+
+        .stat {
+            margin-right: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab.active {
+            border-bottom: 3px solid var(--accent-color);
+            font-weight: bold;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .achievement-card {
+            background-color: var(--card-color);
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            transition: transform 0.3s ease;
+        }
+
+        .achievement-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .achievement-icon {
+            width: 50px;
+            height: 50px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .achievement-locked {
+            background-color: #e0e0e0;
+            color: #999;
+        }
+
+        .achievement-info h3 {
+            margin-bottom: 5px;
+        }
+
+        .achievement-info p {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .game-card {
+            background-color: var(--card-color);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .game-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .game-card h3 {
+            margin-bottom: 10px;
+        }
+
+        .game-card p {
+            margin-bottom: 15px;
+            color: #666;
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        /* Стили для модальных окон */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: var(--card-color);
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .close-btn {
+            float: right;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Стили для игры "Кликер" */
+        #clicker-game {
+            text-align: center;
+        }
+
+        #clicker-btn {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            margin: 20px 0;
+            transition: transform 0.1s ease;
+        }
+
+        #clicker-btn:active {
+            transform: scale(0.95);
+        }
+
+        #clicker-score {
+            font-size: 1.5rem;
+            margin: 10px 0;
+        }
+
+        /* Стили для игры "Викторина" */
+        .quiz-question {
+            margin-bottom: 20px;
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .quiz-option {
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .quiz-option:hover {
+            background-color: #e0e0e0;
+        }
+
+        .quiz-result {
+            margin-top: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* Стили для игры "Угадай число" */
+        #guess-number-game {
+            text-align: center;
+        }
+
+        #guess-input {
+            padding: 8px;
+            width: 100px;
+            margin: 10px 0;
+        }
+
+        #guess-feedback {
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        /* Анимация уведомления о достижении */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            z-index: 1001;
+            transform: translateX(200%);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification-icon {
+            margin-right: 10px;
+            font-size: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .achievements-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+            
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .profile {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .avatar {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+            
+            .stats {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Игровая площадка достижений</h1>
+    </header>
+
+    <div class="container">
+        <div class="profile">
+            <div class="avatar" id="user-avatar">U</div>
+            <div class="profile-info">
+                <h2 id="username">Пользователь</h2>
+                <div class="progress-bar">
+                    <div class="progress" id="level-progress"></div>
+                </div>
+                <div class="stats">
+                    <div class="stat">
+                        <strong id="user-level">1</strong> уровень
+                    </div>
+                    <div class="stat">
+                        <strong id="achievements-count">0</strong> достижений
+                    </div>
+                    <div class="stat">
+                        <strong id="user-points">0</strong> очков
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" data-tab="achievements">Достижения</div>
+            <div class="tab" data-tab="games">Мини-игры</div>
+        </div>
+
+        <div class="tab-content active" id="achievements-tab">
+            <h2>Ваши достижения</h2>
+            <div class="achievements-grid" id="achievements-container">
+                <!-- Достижения будут загружены через JavaScript -->
+            </div>
+        </div>
+
+        <div class="tab-content" id="games-tab">
+            <h2>Мини-игры</h2>
+            <div class="games-grid">
+                <div class="game-card">
+                    <div class="game-icon">🎮</div>
+                    <h3>Кликер</h3>
+                    <p>Кликайте на кнопку, чтобы зарабатывать очки и достижения!</p>
+                    <button class="btn" onclick="openGameModal('clicker')">Играть</button>
+                </div>
+                <div class="game-card">
+                    <div class="game-icon">❓</div>
+                    <h3>Викторина</h3>
+                    <p>Ответьте на вопросы викторины и получите достижения!</p>
+                    <button class="btn" onclick="openGameModal('quiz')">Играть</button>
+                </div>
+                <div class="game-card">
+                    <div class="game-icon">🔢</div>
+                    <h3>Угадай число</h3>
+                    <p>Попробуйте угадать число от 1 до 100 за минимальное количество попыток!</p>
+                    <button class="btn" onclick="openGameModal('guess')">Играть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для игр -->
+    <div class="modal" id="game-modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeGameModal()">&times;</span>
+            <div id="game-container">
+                <!-- Контент игры будет загружен здесь -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Уведомление о достижении -->
+    <div class="notification" id="achievement-notification">
+        <div class="notification-icon">🏆</div>
+        <div>
+            <h3 id="notification-title">Новое достижение!</h3>
+            <p id="notification-desc">Вы получили достижение!</p>
+        </div>
+    </div>
+
+    <script>
+        // Данные пользователя
+        const user = {
+            name: "Игрок",
+            level: 1,
+            points: 0,
+            experience: 0,
+            experienceToNextLevel: 100,
+            achievements: []
+        };
+
+        // Все возможные достижения
+        const achievements = [
+            { id: 'first-steps', title: 'Первые шаги', description: 'Зайдите на сайт', icon: '👣', points: 10, condition: () => true, hidden: false },
+            { id: 'clicker-beginner', title: 'Начинающий кликер', description: 'Сделайте 10 кликов', icon: '🖱️', points: 20, condition: (stats) => stats.clicks >= 10, hidden: false },
+            { id: 'clicker-pro', title: 'Профессиональный кликер', description: 'Сделайте 100 кликов', icon: '💻', points: 50, condition: (stats) => stats.clicks >= 100, hidden: false },
+            { id: 'quiz-beginner', title: 'Знаток', description: 'Правильно ответьте на 5 вопросов', icon: '🧠', points: 30, condition: (stats) => stats.quizCorrect >= 5, hidden: false },
+            { id: 'quiz-master', title: 'Эрудит', description: 'Правильно ответьте на 20 вопросов', icon: '🎓', points: 70, condition: (stats) => stats.quizCorrect >= 20, hidden: false },
+            { id: 'guess-expert', title: 'Угадайка', description: 'Угадайте число за 5 попыток или меньше', icon: '🎯', points: 40, condition: (stats) => stats.guessAttempts <= 5 && stats.guessWins > 0, hidden: false },
+            { id: 'level-5', title: 'Опытный игрок', description: 'Достигните 5 уровня', icon: '⭐', points: 100, condition: (stats) => stats.level >= 5, hidden: false },
+            { id: 'point-collector', title: 'Коллекционер очков', description: 'Заработайте 500 очков', icon: '💰', points: 80, condition: (stats) => stats.points >= 500, hidden: false },
+            { id: 'secret-achievement', title: 'Секретное достижение', description: 'Найдите секретное достижение', icon: '🔐', points: 150, condition: (stats) => stats.secretFound, hidden: true }
+        ];
+
+        // Статистика игрока
+        const stats = {
+            clicks: 0,
+            quizCorrect: 0,
+            quizTotal: 0,
+            guessWins: 0,
+            guessAttempts: 0,
+            secretFound: false
+        };
+
+        // Инициализация страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserData();
+            updateProfile();
+            renderAchievements();
+            setupTabs();
+            
+            // Даем достижение за первый вход
+            checkAchievement('first-steps');
+        });
+
+        // Загрузка данных пользователя из localStorage
+        function loadUserData() {
+            const savedUser = localStorage.getItem('achievementUser');
+            const savedStats = localStorage.getItem('achievementStats');
+            
+            if (savedUser) {
+                Object.assign(user, JSON.parse(savedUser));
+            }
+            
+            if (savedStats) {
+                Object.assign(stats, JSON.parse(savedStats));
+            }
+        }
+
+        // Сохранение данных пользователя в localStorage
+        function saveUserData() {
+            localStorage.setItem('achievementUser', JSON.stringify(user));
+            localStorage.setItem('achievementStats', JSON.stringify(stats));
+        }
+
+        // Обновление профиля пользователя
+        function updateProfile() {
+            document.getElementById('username').textContent = user.name;
+            document.getElementById('user-level').textContent = user.level;
+            document.getElementById('achievements-count').textContent = user.achievements.length;
+            document.getElementById('user-points').textContent = user.points;
+            
+            const progressPercent = (user.experience / user.experienceToNextLevel) * 100;
+            document.getElementById('level-progress').style.width = `${progressPercent}%`;
+        }
+
+        // Настройка вкладок
+        function setupTabs() {
+            const tabs = document.querySelectorAll('.tab');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Удаляем активный класс у всех вкладок
+                    tabs.forEach(t => t.classList.remove('active'));
+                    // Добавляем активный класс текущей вкладке
+                    this.classList.add('active');
+                    
+                    // Скрываем все содержимое вкладок
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    // Показываем содержимое текущей вкладки
+                    const tabId = this.getAttribute('data-tab');
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                });
+            });
+        }
+
+        // Отображение достижений
+        function renderAchievements() {
+            const container = document.getElementById('achievements-container');
+            container.innerHTML = '';
+            
+            achievements.forEach(achievement => {
+                const isUnlocked = user.achievements.includes(achievement.id);
+                const isHidden = achievement.hidden && !isUnlocked;
+                
+                if (isHidden) return;
+                
+                const card = document.createElement('div');
+                card.className = `achievement-card ${isUnlocked ? '' : 'achievement-locked'}`;
+                
+                card.innerHTML = `
+                    <div class="achievement-icon ${isUnlocked ? '' : 'achievement-locked'}">${achievement.icon}</div>
+                    <div class="achievement-info">
+                        <h3>${achievement.title}</h3>
+                        <p>${isUnlocked ? achievement.description : '??? (скрытое достижение)'}</p>
+                        ${isUnlocked ? `<small>+${achievement.points} очков</small>` : ''}
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        // Проверка достижения
+        function checkAchievement(achievementId) {
+            // Если достижение уже получено, ничего не делаем
+            if (user.achievements.includes(achievementId)) return false;
+            
+            const achievement = achievements.find(a => a.id === achievementId);
+            if (!achievement) return false;
+            
+            // Проверяем условие достижения
+            if (achievement.condition(stats)) {
+                // Добавляем достижение
+                user.achievements.push(achievementId);
+                user.points += achievement.points;
+                
+                // Добавляем опыт
+                addExperience(20);
+                
+                // Показываем уведомление
+                showAchievementNotification(achievement);
+                
+                // Обновляем профиль и сохраняем данные
+                updateProfile();
+                renderAchievements();
+                saveUserData();
+                
+                return true;
+            }
+            
+            return false;
+        }
+
+        // Проверка всех достижений
+        function checkAllAchievements() {
+            achievements.forEach(achievement => {
+                if (!user.achievements.includes(achievement.id)) {
+                    checkAchievement(achievement.id);
+                }
+            });
+        }
+
+        // Добавление опыта
+        function addExperience(amount) {
+            user.experience += amount;
+            
+            // Проверяем, не достигнут ли новый уровень
+            while (user.experience >= user.experienceToNextLevel) {
+                user.experience -= user.experienceToNextLevel;
+                user.level += 1;
+                user.experienceToNextLevel = Math.floor(user.experienceToNextLevel * 1.2);
+                
+                // Показываем уведомление о новом уровне
+                showLevelUpNotification();
+                
+                // Проверяем достижения, связанные с уровнем
+                checkAllAchievements();
+            }
+            
+            updateProfile();
+            saveUserData();
+        }
+
+        // Показ уведомления о достижении
+        function showAchievementNotification(achievement) {
+            const notification = document.getElementById('achievement-notification');
+            document.getElementById('notification-title').textContent = achievement.title;
+            document.getElementById('notification-desc').textContent = achievement.description;
+            
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 5000);
+        }
+
+        // Показ уведомления о новом уровне
+        function showLevelUpNotification() {
+            const notification = document.getElementById('achievement-notification');
+            document.getElementById('notification-title').textContent = `Новый уровень: ${user.level}!`;
+            document.getElementById('notification-desc').textContent = 'Поздравляем с повышением уровня!';
+            
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 5000);
+        }
+
+        // Открытие модального окна с игрой
+        function openGameModal(gameType) {
+            const modal = document.getElementById('game-modal');
+            const container = document.getElementById('game-container');
+            
+            switch (gameType) {
+                case 'clicker':
+                    container.innerHTML = `
+                        <h2>Кликер</h2>
+                        <p>Кликайте на кнопку, чтобы зарабатывать очки!</p>
+                        <div id="clicker-score">Очков: 0</div>
+                        <button id="clicker-btn">КЛИК!</button>
+                        <p>Всего кликов: <span id="total-clicks">${stats.clicks}</span></p>
+                    `;
+                    
+                    let score = 0;
+                    const clickerBtn = document.getElementById('clicker-btn');
+                    const clickerScore = document.getElementById('clicker-score');
+                    const totalClicks = document.getElementById('total-clicks');
+                    
+                    clickerBtn.addEventListener('click', function() {
+                        score++;
+                        stats.clicks++;
+                        clickerScore.textContent = `Очков: ${score}`;
+                        totalClicks.textContent = stats.clicks;
+                        
+                        // Проверяем достижения, связанные с кликами
+                        checkAchievement('clicker-beginner');
+                        checkAchievement('clicker-pro');
+                        
+                        // Добавляем немного опыта за клик
+                        addExperience(1);
+                        
+                        // Случайный шанс найти секретное достижение
+                        if (!stats.secretFound && Math.random() < 0.001) {
+                            stats.secretFound = true;
+                            checkAchievement('secret-achievement');
+                        }
+                        
+                        saveUserData();
+                    });
+                    break;
+                    
+                case 'quiz':
+                    container.innerHTML = `
+                        <h2>Викторина</h2>
+                        <div id="quiz-container">
+                            <div class="quiz-question" id="quiz-question"></div>
+                            <div class="quiz-options" id="quiz-options"></div>
+                            <div class="quiz-result" id="quiz-result"></div>
+                            <button class="btn" id="next-question-btn" style="display: none;">Следующий вопрос</button>
+                        </div>
+                        <p>Правильных ответов: ${stats.quizCorrect} из ${stats.quizTotal}</p>
+                    `;
+                    
+                    const questions = [
+                        {
+                            question: "Какая планета самая большая в Солнечной системе?",
+                            options: ["Земля", "Марс", "Юпитер", "Сатурн"],
+                            answer: 2
+                        },
+                        {
+                            question: "Сколько континентов на Земле?",
+                            options: ["5", "6", "7", "8"],
+                            answer: 2
+                        },
+                        {
+                            question: "Какое животное является самым быстрым на суше?",
+                            options: ["Гепард", "Лев", "Антилопа", "Лошадь"],
+                            answer: 0
+                        },
+                        {
+                            question: "Какой химический элемент обозначается как 'Au'?",
+                            options: ["Серебро", "Железо", "Золото", "Алюминий"],
+                            answer: 2
+                        },
+                        {
+                            question: "Какое самое глубокое озеро в мире?",
+                            options: ["Каспийское море", "Озеро Верхнее", "Байкал", "Танганьика"],
+                            answer: 2
+                        }
+                    ];
+                    
+                    let currentQuestion = 0;
+                    let quizScore = 0;
+                    
+                    function loadQuestion(index) {
+                        const quizQuestion = document.getElementById('quiz-question');
+                        const quizOptions = document.getElementById('quiz-options');
+                        const quizResult = document.getElementById('quiz-result');
+                        const nextBtn = document.getElementById('next-question-btn');
+                        
+                        quizQuestion.textContent = questions[index].question;
+                        quizOptions.innerHTML = '';
+                        quizResult.textContent = '';
+                        nextBtn.style.display = 'none';
+                        
+                        questions[index].options.forEach((option, i) => {
+                            const optionElement = document.createElement('div');
+                            optionElement.className = 'quiz-option';
+                            optionElement.textContent = option;
+                            optionElement.addEventListener('click', function() {
+                                if (i === questions[index].answer) {
+                                    quizResult.textContent = 'Правильно!';
+                                    quizResult.style.color = 'green';
+                                    quizScore++;
+                                    stats.quizCorrect++;
+                                    
+                                    // Проверяем достижения, связанные с викториной
+                                    checkAchievement('quiz-beginner');
+                                    checkAchievement('quiz-master');
+                                    
+                                    // Добавляем опыт за правильный ответ
+                                    addExperience(10);
+                                } else {
+                                    quizResult.textContent = `Неверно! Правильный ответ: ${questions[index].options[questions[index].answer]}`;
+                                    quizResult.style.color = 'red';
+                                }
+                                
+                                // Отключаем все варианты ответа
+                                document.querySelectorAll('.quiz-option').forEach(opt => {
+                                    opt.style.pointerEvents = 'none';
+                                    if (questions[index].options.indexOf(opt.textContent) === questions[index].answer) {
+                                        opt.style.backgroundColor = '#a5d6a7';
+                                    } else {
+                                        opt.style.backgroundColor = '#ffcdd2';
+                                    }
+                                });
+                                
+                                nextBtn.style.display = 'block';
+                                stats.quizTotal++;
+                                saveUserData();
+                                updateQuizStats();
+                            });
+                            quizOptions.appendChild(optionElement);
+                        });
+                    }
+                    
+                    function updateQuizStats() {
+                        document.querySelector('#quiz-container + p').textContent = 
+                            `Правильных ответов: ${stats.quizCorrect} из ${stats.quizTotal}`;
+                    }
+                    
+                    document.getElementById('next-question-btn').addEventListener('click', function() {
+                        currentQuestion = (currentQuestion + 1) % questions.length;
+                        loadQuestion(currentQuestion);
+                    });
+                    
+                    loadQuestion(0);
+                    break;
+                    
+                case 'guess':
+                    container.innerHTML = `
+                        <h2>Угадай число</h2>
+                        <p>Я загадал число от 1 до 100. Попробуй угадать!</p>
+                        <input type="number" id="guess-input" min="1" max="100">
+                        <button class="btn" id="guess-btn">Проверить</button>
+                        <div id="guess-feedback"></div>
+                        <p>Попыток: <span id="guess-attempts">0</span></p>
+                        <p>Побед: ${stats.guessWins}</p>
+                        <button class="btn" id="new-game-btn" style="display: none;">Новая игра</button>
+                    `;
+                    
+                    let targetNumber = Math.floor(Math.random() * 100) + 1;
+                    let attempts = 0;
+                    const guessInput = document.getElementById('guess-input');
+                    const guessBtn = document.getElementById('guess-btn');
+                    const feedback = document.getElementById('guess-feedback');
+                    const attemptsDisplay = document.getElementById('guess-attempts');
+                    const newGameBtn = document.getElementById('new-game-btn');
+                    
+                    guessBtn.addEventListener('click', function() {
+                        const guess = parseInt(guessInput.value);
+                        
+                        if (isNaN(guess) || guess < 1 || guess > 100) {
+                            feedback.textContent = 'Пожалуйста, введите число от 1 до 100';
+                            feedback.style.color = 'red';
+                            return;
+                        }
+                        
+                        attempts++;
+                        attemptsDisplay.textContent = attempts;
+                        
+                        if (guess === targetNumber) {
+                            feedback.textContent = `Поздравляю! Вы угадали число за ${attempts} попыток!`;
+                            feedback.style.color = 'green';
+                            guessInput.disabled = true;
+                            guessBtn.disabled = true;
+                            newGameBtn.style.display = 'block';
+                            
+                            // Сохраняем статистику
+                            stats.guessWins++;
+                            stats.guessAttempts = attempts;
+                            
+                            // Проверяем достижения
+                            checkAchievement('guess-expert');
+                            
+                            // Добавляем опыт
+                            addExperience(30);
+                            
+                            saveUserData();
+                        } else if (guess < targetNumber) {
+                            feedback.textContent = 'Загаданное число больше';
+                            feedback.style.color = 'black';
+                        } else {
+                            feedback.textContent = 'Загаданное число меньше';
+                            feedback.style.color = 'black';
+                        }
+                        
+                        guessInput.value = '';
+                        guessInput.focus();
+                    });
+                    
+                    newGameBtn.addEventListener('click', function() {
+                        targetNumber = Math.floor(Math.random() * 100) + 1;
+                        attempts = 0;
+                        attemptsDisplay.textContent = '0';
+                        feedback.textContent = '';
+                        guessInput.disabled = false;
+                        guessBtn.disabled = false;
+                        newGameBtn.style.display = 'none';
+                        guessInput.focus();
+                    });
+                    break;
+            }
+            
+            modal.style.display = 'flex';
+        }
+
+        // Закрытие модального окна
+        function closeGameModal() {
+            document.getElementById('game-modal').style.display = 'none';
+        }
+
+        // Закрытие модального окна при клике вне его
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('game-modal');
+            if (event.target === modal) {
+                closeGameModal();
+            }
+        });
+    </script>
+</body>
+</html>

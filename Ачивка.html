@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Open Telegram WebApp</title>
+    <meta charset="UTF-8">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+    <button onclick="openTelegramWebApp()">Open WebApp</button>
+
+    <script>
+        function openTelegramWebApp() {
+            // Проверяем, что мы в Telegram
+            if (window.Telegram && window.Telegram.WebApp) {
+                // Инициализируем WebApp
+                const webApp = Telegram.WebApp;
+                
+                // Показываем кнопку "назад" в интерфейсе Telegram
+                webApp.BackButton.show();
+                
+                // Можно также отправить данные в основное приложение при необходимости
+                // webApp.sendData(JSON.stringify({key: 'value'}));
+                
+                // Включить расширенный интерфейс WebApp (занимает весь экран)
+                webApp.expand();
+                
+                console.log("WebApp is opened in Telegram");
+            } else {
+                // Если открыто вне Telegram, показываем сообщение или альтернативный контент
+                alert("This feature is only available in Telegram. Open this page in Telegram to use the WebApp.");
+                
+                // Альтернатива: открыть ссылку на бота с параметром startapp
+                // window.location.href = "https://t.me/your_bot_username?startapp=webapp";
+            }
+        }
+        
+        // Можно также автоматически открыть WebApp при загрузке страницы
+        // window.onload = openTelegramWebApp;
+    </script>
+</body>
+</html>

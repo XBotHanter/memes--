@@ -6,11 +6,12 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
+    <a>Привет</a>
     <button onclick="openTelegramWebApp()">Open WebApp</button>
 
     <script>
         function openTelegramWebApp() {
-            // Проверяем, что мы в Telegram
+            
             if (window.Telegram && window.Telegram.WebApp) {
                 // Инициализируем WebApp
                 const webApp = Telegram.WebApp;
@@ -38,4 +39,5 @@
         // window.onload = openTelegramWebApp;
     </script>
 </body>
+
 </html>
